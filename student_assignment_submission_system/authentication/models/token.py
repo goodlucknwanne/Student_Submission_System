@@ -1,1 +1,0 @@
-# Simple base model for jwt token
