@@ -1,14 +1,14 @@
 # Teacher adds a comment
 from fastapi import APIRouter, HTTPException, status
 from core.db import assignments_by_id
-from schemas.comments import CommentCreate
-from models.assignment import Assignment
+from models.comment import Comment
+from models.assignment import Assignments
 
 assignment_comment_router = APIRouter()
 
 @assignment_comment_router.post(
     "/assignments/{assignment_id}/comments",
-    response_model=Assignment,
+    response_model=Assignments,
     status_code=status.HTTP_201_CREATED
 )
 def add_comment(
