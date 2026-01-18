@@ -6,7 +6,7 @@ from models.assignment import Assignment
 
 assignment_comment_router = APIRouter()
 
-@assignment_router.post(
+@assignment_comment_router.post(
     "/assignments/{assignment_id}/comments",
     response_model=Assignment,
     status_code=status.HTTP_201_CREATED
