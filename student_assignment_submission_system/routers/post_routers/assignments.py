@@ -8,7 +8,7 @@ from fastapi import (
 )
 from core.db import assignments_by_id
 from models.comment import Comment
-from models.assignment import Assignment
+from models.assignment import Assignments
 from pydantic import BaseModel
 import os
 
