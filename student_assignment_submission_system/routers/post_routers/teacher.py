@@ -7,12 +7,12 @@ teacher_router = APIRouter()
 # register a teacher 
 @teacher_router.post("/", status_code=status.HTTP_CREATED_201)
 def create_teacher(teacher_data: Teacher):
-    teacher: dict = teacher_data.model_dump()
+    teacher_dict: dict = teacher_data.model_dump()
     new_teacher: Teacher = Teacher(
-        name = teacher.name,
-        email = teacher.email
+        name = teacher_dict["name"],
+        email = teacher_dict["email"]
     )
-    teachers_by_name[teacher.name] = new_teacher
+    teachers_by_name[teacher_dict["name"]] = new_teacher
     
     return {"message": "Teacher registered successfully", "data": new_teacher}
     
