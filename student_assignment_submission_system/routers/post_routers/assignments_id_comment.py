@@ -4,7 +4,7 @@ from core.db import assignments_by_id
 from schemas.comments import CommentCreate
 from models.assignment import Assignment
 
-assignment_router = APIRouter()
+assignment_comment_router = APIRouter()
 
 @assignment_router.post(
     "/assignments/{assignment_id}/comments",
