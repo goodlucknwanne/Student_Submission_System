@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status
 from models.db import teachers_by_name
-from models.models import Teacher
+from models.teacher import Teachers, Teacher
 
 teacher_router = APIRouter()
 
