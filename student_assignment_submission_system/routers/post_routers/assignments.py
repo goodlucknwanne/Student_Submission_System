@@ -1,34 +1,63 @@
-from fastapi import APIRouter, HTTPException, status
-from models.database import assignments_by_id, teachers_by_name
-from models.models import Assignment
-from schemas.assignment import AssignmentCreate, AssignmentResponse
+from fastapi import (
+    APIRouter,
+    UploadFile,
+    File,
+    Form,
+    HTTPException,
+    status
+)
+from core.db import assignments_by_id
+from models.comment import Comment
+from models.assignment import Assignment
+from pydantic import BaseModel
+import os
 
 assignment_router = APIRouter()
 
-#post an assignment
-@assignment_router.post("/assignments", response_model=AssignmentResponse, status_code=status.HTTP_201_CREATED)
 
-def create_assignment(assignment: AssignmentCreate):
-    # Checking if teacher exists
-    if assignment.teacher_name not in teachers_by_name:
+class CommentCreate(BaseModel):
+    comment: str
+    
+ALLOWED_EXTENSIONS = {"pdf", "docx", "doc"}
+
+@assignment_router.post(
+    "/assignments",
+    response_model=Assignment,
+    status_code=status.HTTP_201_CREATED
+)
+def submit_assignment(
+    student_name: str = Form(...),
+    subject: str = Form(...),
+    description: str = Form(...),
+    file: UploadFile = File(...)
+):
+    # Validate file extension
+    file_extension = file.filename.split(".")[-1].lower()
+
+    if file_extension not in ALLOWED_EXTENSIONS:
         raise HTTPException(
-            status_code=404,
-            detail="Teacher not found"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid file type. Only PDF and Word documents are allowed."
         )
 
-    # Generate assignment ID
     assignment_id = len(assignments_by_id) + 1
 
-    # Create assignment instance
+   
+    os.makedirs("uploads", exist_ok=True)
+
+    file_path = f"media/uploads/{assignment_id}_{file.filename}"
+    with open(file_path, "wb") as f:
+        f.write(file.file.read())
+
     new_assignment = Assignment(
         id=assignment_id,
-        title=assignment.title,
-        description=assignment.description,
-        teacher_name=assignment.teacher_name
+        student_name=student_name,
+        subject=subject,
+        description=description,
+        filename=file.filename,
+        comments=[]
     )
 
-    # Save to DB
     assignments_by_id[assignment_id] = new_assignment
 
-    return {"message": "Assignment created successfully", "data":new_assignment}
-    
+    return {"message": "Assignment successfully uploaded", "data": new_assignment}
